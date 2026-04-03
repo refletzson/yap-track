@@ -1,0 +1,9 @@
+node_modules/
+backend/node_modules/
+backend/yaptrack.db
+backend/yaptrack.db-shm
+backend/yaptrack.db-wal
+backend/sessions.db
+dist/
+.env
+.claude/
