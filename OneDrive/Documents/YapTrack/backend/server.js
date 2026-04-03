@@ -7,21 +7,34 @@ require('./db')
 
 const app = express()
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  /\.vercel\.app$/
+]
+
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true)
+    const allowed = allowedOrigins.some(o =>
+      typeof o === 'string' ? o === origin : o.test(origin)
+    )
+    cb(null, allowed)
+  },
   credentials: true
 }))
 
 app.use(express.json())
 
+const isProduction = process.env.NODE_ENV === 'production'
+
 app.use(session({
-  secret: 'yaptrack-dev-secret',
+  secret: process.env.SESSION_SECRET || 'yaptrack-dev-secret',
   resave: false,
   saveUninitialized: false,
   cookie: {
     httpOnly: true,
-    sameSite: 'lax',
-    secure: false,
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
     maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
   }
 }))
