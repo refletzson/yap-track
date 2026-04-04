@@ -22,7 +22,8 @@ export default function PrefireCard({ prefire: initial, currentUser, onUpdate, c
   const [actionLoading, setActionLoading] = useState(null)
 
   const isOwnPrefire = currentUser?.id === prefire.caller_id
-  const canVote = prefire.status === 'hit' && currentUser?.id !== prefire.caller_id
+  const isTarget = prefire.target_user_id && currentUser?.id === prefire.target_user_id
+  const canVote = prefire.status === 'hit' && !isOwnPrefire && !isTarget
   const showActions = isOwnPrefire && prefire.status === 'pending'
 
   async function markHit() {
@@ -99,7 +100,7 @@ export default function PrefireCard({ prefire: initial, currentUser, onUpdate, c
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 transition-colors"
             >
               <FiCheck size={14} />
-              {actionLoading === 'hit' ? 'Marking...' : 'Hit'}
+              {actionLoading === 'hit' ? 'Deploying...' : '🔥 Deploy for Voting'}
             </button>
             <button
               onClick={markDeny}
@@ -107,7 +108,7 @@ export default function PrefireCard({ prefire: initial, currentUser, onUpdate, c
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-bold bg-denied/10 text-denied border border-denied/30 hover:bg-denied/20 disabled:opacity-50 transition-colors"
             >
               <FiX size={14} />
-              {actionLoading === 'deny' ? 'Marking...' : 'Miss'}
+              {actionLoading === 'deny' ? 'Marking...' : "Didn't Happen"}
             </button>
           </div>
         )}

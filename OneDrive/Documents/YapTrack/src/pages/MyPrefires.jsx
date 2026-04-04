@@ -41,7 +41,7 @@ export default function MyPrefires() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-4xl font-black">My Prefires</h1>
-          <p className="text-muted mt-1">Your calls, your record</p>
+          <p className="text-muted mt-1">Pending prefires are only visible to you until you deploy them</p>
         </div>
         <Link
           to="/submit"

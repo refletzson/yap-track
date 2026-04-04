@@ -23,12 +23,17 @@ router.get('/mine', requireAuth, (req, res) => {
   res.json(prefires)
 })
 
-// GET /api/prefires
+// GET /api/prefires — pending prefires are private (only visible to their creator)
 router.get('/', (req, res) => {
   const { status, user, page = 1 } = req.query
   const offset = (Number(page) - 1) * 20
   const conditions = []
   const params = []
+
+  // Never show other people's pending prefires
+  const callerId = req.session.userId || -1
+  conditions.push("(p.status != 'pending' OR p.caller_id = ?)")
+  params.push(callerId)
 
   if (status) {
     conditions.push("p.status = ?")
@@ -39,7 +44,7 @@ router.get('/', (req, res) => {
     params.push(user, user)
   }
 
-  const where = conditions.length ? `WHERE ${conditions.join(' AND ')}` : ''
+  const where = `WHERE ${conditions.join(' AND ')}`
 
   const prefires = db.prepare(`
     ${PREFIRE_SELECT}

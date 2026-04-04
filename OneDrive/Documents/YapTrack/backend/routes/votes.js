@@ -37,6 +37,9 @@ router.post('/:prefireId', requireAuth, (req, res) => {
   if (prefire.caller_id === req.session.userId) {
     return res.status(403).json({ error: "You can't vote on your own prefire" })
   }
+  if (prefire.target_user_id && prefire.target_user_id === req.session.userId) {
+    return res.status(403).json({ error: "You can't vote on a prefire targeting you" })
+  }
 
   try {
     db.prepare('INSERT INTO votes (prefire_id, voter_id, vote) VALUES (?, ?, ?)').run(prefireId, req.session.userId, vote)
