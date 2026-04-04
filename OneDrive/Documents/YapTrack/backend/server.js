@@ -7,6 +7,9 @@ require('./db')
 
 const app = express()
 
+// Required for secure cookies behind Railway/Vercel proxy
+app.set('trust proxy', 1)
+
 const allowedOrigins = [
   'http://localhost:5173',
   /\.vercel\.app$/
