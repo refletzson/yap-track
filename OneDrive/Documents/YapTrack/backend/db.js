@@ -46,6 +46,19 @@ async function init() {
     )
   `)
 
+  await query(`
+    CREATE TABLE IF NOT EXISTS session (
+      sid VARCHAR NOT NULL COLLATE "default",
+      sess JSON NOT NULL,
+      expire TIMESTAMP(6) NOT NULL,
+      CONSTRAINT session_pkey PRIMARY KEY (sid)
+    )
+  `)
+
+  await query(`
+    CREATE INDEX IF NOT EXISTS IDX_session_expire ON session (expire)
+  `)
+
   console.log('Database ready')
 }
 

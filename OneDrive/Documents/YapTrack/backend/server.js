@@ -29,7 +29,7 @@ app.use(express.json())
 const isProduction = process.env.NODE_ENV === 'production'
 
 app.use(session({
-  store: new pgSession({ pool, createTableIfMissing: true }),
+  store: new pgSession({ pool }),
   secret: process.env.SESSION_SECRET || 'yaptrack-dev-secret',
   resave: false,
   saveUninitialized: false,
@@ -45,6 +45,16 @@ app.use('/api/auth', require('./routes/auth'))
 app.use('/api/prefires', require('./routes/prefires'))
 app.use('/api/votes', require('./routes/votes'))
 app.use('/api/stats', require('./routes/stats'))
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught exception:', err)
+  process.exit(1)
+})
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled rejection:', reason)
+  process.exit(1)
+})
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => console.log(`YapTrack backend running on port ${PORT}`))
