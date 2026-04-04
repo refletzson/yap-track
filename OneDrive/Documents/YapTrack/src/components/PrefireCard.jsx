@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { FiArrowRight, FiCheck, FiX } from 'react-icons/fi'
 import StatusBadge from './StatusBadge'
 import VoteButtons from './VoteButtons'
+import { apiFetch } from '../api'
 
 function timeAgo(dateStr) {
   const diff = Date.now() - new Date(dateStr + 'Z').getTime()
@@ -27,10 +28,7 @@ export default function PrefireCard({ prefire: initial, currentUser, onUpdate, c
   async function markHit() {
     setActionLoading('hit')
     try {
-      const res = await fetch(`/api/prefires/${prefire.id}/hit`, {
-        method: 'PATCH',
-        credentials: 'include'
-      })
+      const res = await apiFetch(`/api/prefires/${prefire.id}/hit`, { method: 'PATCH' })
       if (res.ok) {
         const updated = await res.json()
         setPrefire(updated)
@@ -44,10 +42,7 @@ export default function PrefireCard({ prefire: initial, currentUser, onUpdate, c
   async function markDeny() {
     setActionLoading('deny')
     try {
-      const res = await fetch(`/api/prefires/${prefire.id}/deny`, {
-        method: 'PATCH',
-        credentials: 'include'
-      })
+      const res = await apiFetch(`/api/prefires/${prefire.id}/deny`, { method: 'PATCH' })
       if (res.ok) {
         const updated = await res.json()
         setPrefire(updated)
@@ -69,7 +64,6 @@ export default function PrefireCard({ prefire: initial, currentUser, onUpdate, c
       animate={{ opacity: 1, y: 0 }}
       className="bg-surface border border-border rounded-xl p-4 hover:border-border/80 transition-colors"
     >
-      {/* Header row */}
       <div className="flex items-center justify-between gap-3 mb-3">
         <div className="flex items-center gap-2 min-w-0">
           <span className="font-bold text-white truncate">{prefire.caller_name}</span>
@@ -82,14 +76,11 @@ export default function PrefireCard({ prefire: initial, currentUser, onUpdate, c
         </div>
       </div>
 
-      {/* Description */}
       <p className={`text-white/80 mb-3 ${compact ? 'text-sm line-clamp-2' : 'text-sm leading-relaxed'}`}>
         {prefire.description}
       </p>
 
-      {/* Footer row */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
-        {/* Vote counts or vote buttons */}
         {(prefire.status === 'hit' || prefire.status === 'confirmed' || prefire.status === 'denied') && (
           <VoteButtons
             prefireId={prefire.id}
@@ -100,7 +91,6 @@ export default function PrefireCard({ prefire: initial, currentUser, onUpdate, c
           />
         )}
 
-        {/* Hit / Deny buttons */}
         {showActions && (
           <div className="flex items-center gap-2 ml-auto">
             <button
@@ -122,7 +112,6 @@ export default function PrefireCard({ prefire: initial, currentUser, onUpdate, c
           </div>
         )}
 
-        {/* Timestamp on mobile */}
         <span className="text-xs text-muted sm:hidden ml-auto">{timeAgo(prefire.created_at)}</span>
       </div>
     </motion.div>

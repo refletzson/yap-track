@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { apiFetch } from '../api'
 
 const AuthContext = createContext(null)
 
@@ -7,7 +8,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/auth/me', { credentials: 'include' })
+    apiFetch('/api/auth/me')
       .then(r => r.json())
       .then(data => {
         setUser(data.user || null)
@@ -17,10 +18,8 @@ export function AuthProvider({ children }) {
   }, [])
 
   async function login(username, password) {
-    const res = await fetch('/api/auth/login', {
+    const res = await apiFetch('/api/auth/login', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
       body: JSON.stringify({ username, password })
     })
     const data = await res.json()
@@ -30,10 +29,8 @@ export function AuthProvider({ children }) {
   }
 
   async function register(username, password) {
-    const res = await fetch('/api/auth/register', {
+    const res = await apiFetch('/api/auth/register', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
       body: JSON.stringify({ username, password })
     })
     const data = await res.json()
@@ -43,10 +40,7 @@ export function AuthProvider({ children }) {
   }
 
   async function logout() {
-    await fetch('/api/auth/logout', {
-      method: 'POST',
-      credentials: 'include'
-    })
+    await apiFetch('/api/auth/logout', { method: 'POST' })
     setUser(null)
   }
 

@@ -4,6 +4,7 @@ import { FiPlusCircle } from 'react-icons/fi'
 import KDStatCard from '../components/KDStatCard'
 import PrefireCard from '../components/PrefireCard'
 import { useAuth } from '../context/AuthContext'
+import { apiFetch } from '../api'
 
 const FILTERS = ['all', 'pending', 'hit', 'confirmed', 'denied']
 
@@ -17,8 +18,8 @@ export default function MyPrefires() {
   const fetchData = useCallback(() => {
     setLoading(true)
     Promise.all([
-      fetch('/api/prefires/mine', { credentials: 'include' }).then(r => r.json()),
-      fetch('/api/stats/me', { credentials: 'include' }).then(r => r.json())
+      apiFetch('/api/prefires/mine').then(r => r.json()),
+      apiFetch('/api/stats/me').then(r => r.json())
     ]).then(([p, s]) => {
       setPrefires(p)
       setStats(s)
@@ -51,10 +52,8 @@ export default function MyPrefires() {
         </Link>
       </div>
 
-      {/* K/D Stat Card */}
       {stats && <KDStatCard kills={stats.kills} deaths={stats.deaths} ratio={stats.ratio} />}
 
-      {/* Filter Bar */}
       <div className="flex items-center gap-2 mb-5 flex-wrap">
         {FILTERS.map(f => (
           <button
@@ -71,7 +70,6 @@ export default function MyPrefires() {
         ))}
       </div>
 
-      {/* Prefire List */}
       {loading ? (
         <div className="text-muted py-8 text-center">Loading...</div>
       ) : filtered.length === 0 ? (

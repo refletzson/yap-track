@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FiZap } from 'react-icons/fi'
 import { useAuth } from '../context/AuthContext'
+import { apiFetch } from '../api'
 
 export default function SubmitPrefire() {
   const { user } = useAuth()
@@ -21,10 +22,8 @@ export default function SubmitPrefire() {
 
     setLoading(true)
     try {
-      const res = await fetch('/api/prefires', {
+      const res = await apiFetch('/api/prefires', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ target_name: targetName.trim(), description: description.trim() })
       })
       const data = await res.json()
@@ -48,7 +47,6 @@ export default function SubmitPrefire() {
 
         <div className="bg-surface border border-border rounded-2xl p-6">
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Caller (read-only) */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">
                 Calling From
@@ -58,7 +56,6 @@ export default function SubmitPrefire() {
               </div>
             </div>
 
-            {/* Target */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">
                 Prefiring
@@ -77,7 +74,6 @@ export default function SubmitPrefire() {
               </p>
             </div>
 
-            {/* Description */}
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-muted mb-1.5">
                 The Prefire

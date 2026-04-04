@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { FiAward, FiActivity } from 'react-icons/fi'
 import PrefireCard from '../components/PrefireCard'
 import { useAuth } from '../context/AuthContext'
+import { apiFetch } from '../api'
 
 export default function Home() {
   const { user } = useAuth()
@@ -12,8 +13,8 @@ export default function Home() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/stats/leaderboard', { credentials: 'include' }).then(r => r.json()),
-      fetch('/api/prefires?page=1', { credentials: 'include' }).then(r => r.json())
+      apiFetch('/api/stats/leaderboard').then(r => r.json()),
+      apiFetch('/api/prefires?page=1').then(r => r.json())
     ]).then(([lb, prefires]) => {
       setLeaderboard(lb)
       setRecent(prefires.slice(0, 10))
@@ -37,7 +38,6 @@ export default function Home() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-        {/* Leaderboard */}
         <div className="lg:col-span-2">
           <div className="flex items-center gap-2 mb-4">
             <FiAward className="text-accent" size={18} />
@@ -86,7 +86,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Recent Activity */}
         <div className="lg:col-span-3">
           <div className="flex items-center gap-2 mb-4">
             <FiActivity className="text-accent" size={18} />
@@ -99,12 +98,7 @@ export default function Home() {
           ) : (
             <div className="space-y-3">
               {recent.map(prefire => (
-                <PrefireCard
-                  key={prefire.id}
-                  prefire={prefire}
-                  currentUser={user}
-                  compact
-                />
+                <PrefireCard key={prefire.id} prefire={prefire} currentUser={user} compact />
               ))}
             </div>
           )}

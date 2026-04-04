@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { FiFilter } from 'react-icons/fi'
 import PrefireCard from '../components/PrefireCard'
 import { useAuth } from '../context/AuthContext'
+import { apiFetch } from '../api'
 
 const FILTERS = ['all', 'pending', 'hit', 'confirmed', 'denied']
 
@@ -21,7 +22,7 @@ export default function AllPrefires() {
     const setter = append ? setLoadingMore : setLoading
     setter(true)
 
-    fetch(`/api/prefires?${params}`, { credentials: 'include' })
+    apiFetch(`/api/prefires?${params}`)
       .then(r => r.json())
       .then(data => {
         if (append) {
@@ -52,7 +53,6 @@ export default function AllPrefires() {
         <p className="text-muted mt-1">The full record — vote on hits, see what landed</p>
       </div>
 
-      {/* Filter Bar */}
       <div className="flex items-center gap-2 mb-5 flex-wrap">
         <FiFilter className="text-muted" size={14} />
         {FILTERS.map(f => (
@@ -70,7 +70,6 @@ export default function AllPrefires() {
         ))}
       </div>
 
-      {/* Prefire List */}
       {loading ? (
         <div className="text-muted py-8 text-center">Loading...</div>
       ) : prefires.length === 0 ? (
@@ -81,11 +80,7 @@ export default function AllPrefires() {
         <>
           <div className="space-y-3">
             {prefires.map(prefire => (
-              <PrefireCard
-                key={prefire.id}
-                prefire={prefire}
-                currentUser={user}
-              />
+              <PrefireCard key={prefire.id} prefire={prefire} currentUser={user} />
             ))}
           </div>
 

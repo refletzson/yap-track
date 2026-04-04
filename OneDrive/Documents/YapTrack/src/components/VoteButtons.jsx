@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { apiFetch } from '../api'
 
 export default function VoteButtons({ prefireId, legitCount, bogusCount, canVote, onVoted }) {
   const [loading, setLoading] = useState(false)
@@ -8,10 +9,8 @@ export default function VoteButtons({ prefireId, legitCount, bogusCount, canVote
     if (loading || voted) return
     setLoading(true)
     try {
-      const res = await fetch(`/api/votes/${prefireId}`, {
+      const res = await apiFetch(`/api/votes/${prefireId}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
         body: JSON.stringify({ vote })
       })
       const data = await res.json()
