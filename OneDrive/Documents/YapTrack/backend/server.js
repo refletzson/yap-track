@@ -1,13 +1,11 @@
 const express = require('express')
 const session = require('express-session')
+const pgSession = require('connect-pg-simple')(session)
 const cors = require('cors')
-
-// Initialize DB on startup
-require('./db')
+const { pool } = require('./db')
 
 const app = express()
 
-// Required for secure cookies behind Railway/Vercel proxy
 app.set('trust proxy', 1)
 
 const allowedOrigins = [
@@ -31,6 +29,7 @@ app.use(express.json())
 const isProduction = process.env.NODE_ENV === 'production'
 
 app.use(session({
+  store: new pgSession({ pool, createTableIfMissing: true }),
   secret: process.env.SESSION_SECRET || 'yaptrack-dev-secret',
   resave: false,
   saveUninitialized: false,
@@ -47,5 +46,5 @@ app.use('/api/prefires', require('./routes/prefires'))
 app.use('/api/votes', require('./routes/votes'))
 app.use('/api/stats', require('./routes/stats'))
 
-const PORT = 3001
-app.listen(PORT, () => console.log(`YapTrack backend running on http://localhost:${PORT}`))
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => console.log(`YapTrack backend running on port ${PORT}`))
